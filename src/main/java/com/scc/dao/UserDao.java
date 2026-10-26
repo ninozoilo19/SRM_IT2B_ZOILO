@@ -167,4 +167,28 @@ public class UserDao{
         }
         return false;
     }
+    public boolean updateUserRoleAndStatus(int userId, String newRole, String newStatus) {
+        String sql = "UPDATE users SET roles = ?, status = ? WHERE user_id = ?";
+
+        try (
+                Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, newRole != null ? newRole.toUpperCase() : "");
+            pstmt.setString(2, newStatus != null ? newStatus.toUpperCase() : "");
+            pstmt.setInt(3, userId);
+
+            int rowsUpdated = pstmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("SUCCESS: User ID " + userId + " updated successfully.");
+                return true;
+            } else {
+                System.out.println("ERROR: User ID not found.");
+                return false;
+            }
+        } catch (SQLException e) {
+            System.err.println("ERROR: Error updating user - " + e.getMessage());
+        }
+        return false;
+    }
+
 }
